@@ -20,6 +20,7 @@ ko.components.register "tf-grid",
     @end = ko.observable 0
     @precision = ko.precision
 
+
     model       = params.model() # now static
     @dependent  = model.dependent
     @hiddenColumns = model.hiddenColumns
@@ -29,6 +30,9 @@ ko.components.register "tf-grid",
     @rows       = model["data_#{@table}"]
     @extra      = model["extra_#{@table}"]
     @result     = model["result_#{@table}"]
+    # TODO: Button to flip this bool
+    @toggle     = true;
+    @toggleMean = true;
 
     @sensitivityColumns  = model.sensitivityColumns
     @sensitivityData   = model.sensitivityData
@@ -231,6 +235,90 @@ ko.components.register "tf-grid",
       col.hasOwnProperty("k") &&
       col.k != undefined &&
       index < col.k
+
+    @mean = ( ) ->
+      totals = []
+      rowLength = @rows().length;
+      @rows().forEach( (row) -> 
+        if !totals.length
+          totals = row;
+        else 
+          i = 0
+          row.forEach( (dataPoint) ->
+            totals[i] = totals[i] + dataPoint;
+            i++;
+          )
+      )
+      i = 0
+      totals.forEach( (total) ->
+        totals[i] = total/(rowLength);
+        i++;
+      )
+      return totals;
+    
+    @flipMean = ( ) ->
+      console.log("\n\n\n\n\n\n");
+      console.log(@toggleMean);
+      @toggleMean = !@toggleMean
+    
+    @hasMean = ( ) ->
+      return @toggleMean;
+
+    # @sd = ( ) ->
+    #   sds = []
+    #   means = @mean();
+    #   rowLength = @rows().length;
+    #   @rows().forEach( (row) -> 
+    #     if !sds.length
+    #       sds = row;
+    #     else 
+    #       i = 0
+    #       row.forEach( (dataPoint) ->
+    #         sds[i] = sds[i] + ((dataPoint - means[i]) * (dataPoint - means[i]));
+
+    #         i++;  
+    #       )
+    #   )
+    #   i = 0
+    #   sds.forEach( (total) ->
+    #     sds[i] = total/(rowLength);
+    #     i++;
+    #   )
+    #   return sds;
+
+    @min = ( ) ->
+      min = [];
+      @rows().forEach( (row) ->
+        if !min.length 
+          min = row
+        else
+          i = 0;
+          row.forEach( (dataPoint) -> 
+            if dataPoint < min[i]
+              min[i] = dataPoint;
+
+            i++;
+          )
+      )
+      return min;
+
+    # TODO: Gets called twice for some reason and replaces row 1
+    @max = ( ) ->
+      max = [];
+      @rows().forEach( (row) ->
+        if !max.length 
+          max = row
+        else
+          i = 0;
+          row.forEach( (dataPoint) -> 
+            if dataPoint > max[i]
+              max[i] = dataPoint;
+
+            i++;
+          )
+      )
+      return max;
+
 
     @cols.subscribe ( next ) =>
       if next then adapter.unsubscribeToChanges()
