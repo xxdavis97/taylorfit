@@ -20,6 +20,7 @@ ko.components.register "tf-grid",
     @end = ko.observable 0
     @precision = ko.precision
 
+
     model       = params.model() # now static
     @dependent  = model.dependent
     @hiddenColumns = model.hiddenColumns
@@ -29,6 +30,9 @@ ko.components.register "tf-grid",
     @rows       = model["data_#{@table}"]
     @extra      = model["extra_#{@table}"]
     @result     = model["result_#{@table}"]
+    # TODO: Button to flip this bool
+    @toggle     = true;
+    @toggleMean = true;
 
     @sensitivityColumns  = model.sensitivityColumns
     @sensitivityData   = model.sensitivityData
@@ -231,6 +235,162 @@ ko.components.register "tf-grid",
       col.hasOwnProperty("k") &&
       col.k != undefined &&
       index < col.k
+
+    @mean = ( ) ->
+      totals = []
+      rowLength = @rows().length;
+      @rows().forEach( (row) -> 
+        if !totals.length
+          totals = row;
+        else 
+          i = 0
+          row.forEach( (dataPoint) ->
+            totals[i] = totals[i] + dataPoint;
+            i++;
+          )
+      )
+      i = 0
+      totals.forEach( (total) ->
+        totals[i] = total/(rowLength);
+        i++;
+      )
+      return totals;
+    
+    @flipMean = ( ) ->
+      @toggleMean = !@toggleMean
+      console.log(@toggleMean);
+
+    @hasMean = ( ) ->
+      console.log(@toggleMean);
+      return @toggleMean;
+
+    @getColData = ( ) ->
+      master = [];
+      @rows().forEach( (row) -> 
+        if (master.length == 0)
+          row.forEach( (dataPoint) ->
+            master.push([dataPoint]);
+          )
+        else
+          i = 0;
+          row.forEach( (dataPoint) ->
+            master[i].push(dataPoint);
+            i++;
+          )
+      )
+      return master;
+    
+    @colData = @getColData();
+
+    @med = ( ) ->
+      result = [];
+      @colData.forEach( (col) -> 
+        col = col.sort( (a, b) ->
+          return a - b;
+        );
+        middle = Math.floor((col.length - 1) / 2);
+        if col.length % 2 
+          result.push(col[middle]);
+        else 
+          result.push((col[middle] + col[middle + 1]) / 2.0);
+      )
+      return result;
+
+    @firstQuartile = ( ) ->
+      result = [];
+      @colData.forEach( (col) ->
+        col = col.sort( (a, b) ->
+          return a - b;
+        );
+        pos = ((col.length) - 1) * .25;
+        base = Math.floor(pos);
+        rest = pos - base;
+        if (col[base+1] != undefined)
+          result.push(col[base] + rest * (col[base+1] - col[base]));
+        else 
+          result.push(col[base]);
+      )
+      return result;
+
+    @thirdQuartile = ( ) ->
+      result = [];
+      @colData.forEach( (col) ->
+        col = col.sort( (a, b) ->
+          return a - b;
+        );
+        pos = ((col.length) - 1) * .75;
+        base = Math.floor(pos);
+        rest = pos - base;
+        if (col[base+1] != undefined)
+          result.push(col[base] + rest * (col[base+1] - col[base]));
+        else 
+          result.push(col[base]);
+      )
+      return result;
+    
+    @sd = ( ) => 
+      result = []
+      means = @mean();
+      i = 0;
+      @colData.forEach( (col) ->
+        mean = means[i];
+        sd = 0;
+        col.forEach( (num) ->
+          if sd == 0
+            sd = num;
+          else 
+            sd += ((num-mean)*(num-mean));
+        )
+        sd = sd / col.length
+        result.push(Math.sqrt(sd));
+        i++;
+      )
+      return result;
+
+    @rms = ( ) =>
+      result = []
+      @colData.forEach( (col) ->
+        squares = col.map((val) => (val*val)); 
+        sum = squares.reduce((acum, val) => (acum + val));    
+        mean = sum/col.length; 
+        result.push(Math.sqrt(mean)); 
+      )
+      return result;
+     
+
+    @min = ( ) ->
+      min = [];
+      @rows().forEach( (row) ->
+        if !min.length 
+          min = row
+        else
+          i = 0;
+          row.forEach( (dataPoint) -> 
+            if dataPoint < min[i]
+              min[i] = dataPoint;
+
+            i++;
+          )
+      )
+      return min;
+
+    # TODO: Gets called twice for some reason and replaces row 1
+    @max = ( ) ->
+      max = [];
+      @rows().forEach( (row) ->
+        if !max.length 
+          max = row
+        else
+          i = 0;
+          row.forEach( (dataPoint) -> 
+            if dataPoint > max[i]
+              max[i] = dataPoint;
+
+            i++;
+          )
+      )
+      return max;
+
 
     @cols.subscribe ( next ) =>
       if next then adapter.unsubscribeToChanges()

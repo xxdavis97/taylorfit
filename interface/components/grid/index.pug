@@ -2,6 +2,7 @@
 span.title(data-bind="text:name")
 tf-pager(params="source:rows,start:start,end:end" title="Choose page from this Table")
 a.save(data-bind="click:save" title="Create CSV file with all columns from this Table") Export Data
+
 // ko if:table == "fit"
 tf-loader(params="model:model,table:'fit'")
 //div.button(data-bind="click:show_partition" title="replace data") replace data
@@ -15,6 +16,7 @@ a.clear(data-bind="click:clear" title="Delete this Data Table (Cross or Validati
 span.name(data-bind="text:model().name_validation")
 a.clear(data-bind="click:clear" title="Delete this Data Table (Cross or Validation Tables only)") Clear Data
 // /ko
+
 table.grid
   thead
     tr
@@ -173,8 +175,146 @@ table.grid
           span.mark(data-bind="click:function(){deleteImportanceRatio($index(),'importanceRatio')}")
             | Hide Importance Ratio
       // /ko
-
+  //- div.toggle Toggle Fundamental Statistics
+  //- tf-dropdown(params="")
+  //-   // ko if: !hasMean()
+  //-   span.mark(data-bind="click:function(){flipMean()}")
+  //-     | Show Mean
+  //-   // /ko
+  //-   // ko if: hasMean()
+  //-   span.mark(data-bind="click:function(){flipMean()}")
+  //-     | Hide Mean
+  //-   span.mark(data-bind="text:toggleMean")
+  //-   // /ko
   tbody
+    // ko if: hasMean()
+    tr.stat
+      td.static.stat Mean
+
+      // ko foreach: mean()
+      td.stat(data-bind="style:{background: $component.isHidden($index()) ? '#DCDCDC' : '#FFFFFF'}")
+        //ko if: ($data !== null && $data !== "" && $data !== 0)
+        span(data-bind="text:$component.round_cell($data)")
+        // /ko
+        // ko if: ($data === null || $data === "" || $data === 0)
+        span.placeholder No Data
+        // /ko
+
+      // /ko
+    // /ko
+
+    // ko if: toggle
+    tr.stat
+      td.static.stat SD
+
+      // ko foreach: sd()
+      td.stat(data-bind="style:{background: $component.isHidden($index()) ? '#DCDCDC' : '#FFFFFF'}")
+        //ko if: ($data !== null && $data !== "" && $data !== 0)
+        span(data-bind="text:$component.round_cell($data)")
+        // /ko
+        // ko if: ($data === null || $data === "" || $data === 0)
+        span.placeholder No Data
+        // /ko
+
+      // /ko
+    // /ko
+
+    // ko if: toggle
+    tr.stat
+      td.static.stat RMS
+
+      // ko foreach: rms()
+      td.stat(data-bind="style:{background: $component.isHidden($index()) ? '#DCDCDC' : '#FFFFFF'}")
+        //ko if: ($data !== null && $data !== "" && $data !== 0)
+        span(data-bind="text:$component.round_cell($data)")
+        // /ko
+        // ko if: ($data === null || $data === "" || $data === 0)
+        span.placeholder No Data
+        // /ko
+
+      // /ko
+    // /ko
+
+    //ko if: toggle
+    tr.stat
+      td.static.stat Min
+
+      // ko foreach: min()
+      td.stat(data-bind="style:{background: $component.isHidden($index()) ? '#DCDCDC' : '#FFFFFF'}")
+        //ko if: ($data !== null && $data !== "" && $data !== 0)
+        span(data-bind="text:$component.round_cell($data)")
+        // /ko
+        // ko if: ($data === null || $data === "" || $data === 0)
+        span.placeholder No Data
+        // /ko
+
+      // /ko
+    // /ko
+
+    //ko if: toggle
+    tr.stat
+      td.static.stat 25%
+
+      // ko foreach: firstQuartile()
+      td.stat(data-bind="style:{background: $component.isHidden($index()) ? '#DCDCDC' : '#FFFFFF'}")
+        //ko if: ($data !== null && $data !== "" && $data !== 0)
+        span(data-bind="text:$component.round_cell($data)")
+        // /ko
+        // ko if: ($data === null || $data === "" || $data === 0)
+        span.placeholder No Data
+        // /ko
+
+      // /ko
+    // /ko
+
+    //ko if: toggle
+    tr.stat
+      td.static.stat Med
+
+      // ko foreach: med()
+      td.stat(data-bind="style:{background: $component.isHidden($index()) ? '#DCDCDC' : '#FFFFFF'}")
+        //ko if: ($data !== null && $data !== "" && $data !== 0)
+        span(data-bind="text:$component.round_cell($data)")
+        // /ko
+        // ko if: ($data === null || $data === "" || $data === 0)
+        span.placeholder No Data
+        // /ko
+
+      // /ko
+    // /ko
+
+    //ko if: toggle
+    tr.stat
+      td.static.stat 75%
+
+      // ko foreach: thirdQuartile()
+      td.stat(data-bind="style:{background: $component.isHidden($index()) ? '#DCDCDC' : '#FFFFFF'}")
+        //ko if: ($data !== null && $data !== "" && $data !== 0)
+        span(data-bind="text:$component.round_cell($data)")
+        // /ko
+        // ko if: ($data === null || $data === "" || $data === 0)
+        span.placeholder No Data
+        // /ko
+
+      // /ko
+    // /ko
+
+    //ko if: toggle
+    tr.stat
+      td.static.stat Max
+
+      // ko foreach: max()
+      td.stat(data-bind="style:{background: $component.isHidden($index()) ? '#DCDCDC' : '#FFFFFF'}")
+        //ko if: ($data !== null && $data !== "" && $data !== 0)
+        span(data-bind="text:$component.round_cell($data)")
+        // /ko
+        // ko if: ($data === null || $data === "" || $data === 0)
+        span.placeholder No Data
+        // /ko
+
+      // /ko
+    // /ko
+
     // ko iter:{from:start,to:end}
     tr
       td.static
