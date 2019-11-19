@@ -69,6 +69,12 @@ ko.components.register "tf-replace",
           #   "data_#{@table}": model.rows
           #   name: model.name
           #   columns: model.cols
+        else if ( @table == 'fit')
+          @temp_model(model)
+          @show_partition(true)
+        else if ( @table == 'cross')
+          @temp_model(model)
+          @show_partition(true)
         else if ( @table == "validation" )
           @temp_model(model)
           @show_validate_partition(true)
