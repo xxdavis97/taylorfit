@@ -226,7 +226,7 @@ ko.components.register "tf-grid",
     @round_cell = ( data ) ->
       if !isNaN(data)
         decimals = @precision()
-        +data.toFixed(decimals)
+        +data.toPrecision(decimals)
       else
         data
 
@@ -390,7 +390,6 @@ ko.components.register "tf-grid",
           )
       )
       return max;
-
 
     @cols.subscribe ( next ) =>
       if next then adapter.unsubscribeToChanges()
