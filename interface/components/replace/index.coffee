@@ -55,6 +55,8 @@ ko.components.register "tf-replace",
     # --- for loading just dataset
     @dataset = ko.observable null
     @show_partition = ko.observable undefined
+    @show_fit_partition = ko.observable undefined
+    @show_cross_partition = ko.observable undefined
     @show_validate_partition = ko.observable undefined
     @temp_model = ko.observable undefined
     @dataset.subscribe ( next ) =>
@@ -71,10 +73,10 @@ ko.components.register "tf-replace",
           #   columns: model.cols
         else if ( @table == 'fit')
           @temp_model(model)
-          @show_partition(true)
+          @show_fit_partition(true)
         else if ( @table == 'cross')
           @temp_model(model)
-          @show_partition(true)
+          @show_cross_partition(true)
         else if ( @table == "validation" )
           @temp_model(model)
           @show_validate_partition(true)
@@ -95,6 +97,30 @@ ko.components.register "tf-replace",
       m = params.model()
       m["data_validation"] data_validate
       m["name_validation"] = model.name
+
+    @import_fit_partition = (
+      fit_row_start,
+      fit_row_end,
+    ) ->
+      model = @temp_model()
+      data_fit = if fit_row_start != 0
+      then model.rows[fit_row_start - 1..fit_row_end - 1]
+      else undefined
+      m = params.model()
+      m["data_fit"] data_fit
+      m["name_fit"] = model.name
+
+    @import_cross_partition = (
+      cross_row_start,
+      cross_row_end,
+    ) ->
+      model = @temp_model()
+      data_cross = if cross_row_start != 0
+      then model.rows[cross_row_start - 1..cross_row_end - 1]
+      else undefined
+      m = params.model()
+      m["data_cross"] data_cross
+      m["name_cross"] = model.name
     
      # --- Use from data partition modal
     @import_partition = (

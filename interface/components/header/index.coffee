@@ -14,4 +14,6 @@ ko.components.register "tf-header",
       settings = params.model().show_settings
       settings not settings()
 
+    
+
     return this
