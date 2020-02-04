@@ -545,5 +545,7 @@ ko.components.register "tf-grid",
     @precision.subscribe ( next ) =>
       if next then adapter.unsubscribeToChanges()
       else adapter.subscribeToChanges()
-    
+
+    @show_partition = ( ) =>
+      console.log "This message"
     return this
