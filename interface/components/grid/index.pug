@@ -9,12 +9,12 @@ tf-replace(params="model:model,table:'fit'")
 // /ko
 // ko if:table == "cross"
 span.name(data-bind="text:model().name_cross")
-tf-replace(params="model:model,table:'cross'")
+//tf-replace(params="model:model,table:'cross'")
 a.clear(data-bind="click:clear" title="Delete this Data Table (Cross or Validation Tables only)") Clear Data
 // /ko
 // ko if:table == "validation"
 span.name(data-bind="text:model().name_validation")
-tf-replace(params="model:model,table:'validation'")
+//tf-replace(params="model:model,table:'validation'")
 a.clear(data-bind="click:clear" title="Delete this Data Table (Cross or Validation Tables only)") Clear Data
 // /ko
 

@@ -29,14 +29,11 @@ ko.components.register "tf-fit-data-partition",
     
     @change_fit_partition = ( ) ->
       fit_partition = Number(@fit_p())
-      cross_partition = Number(@cross_p())
-      fit_partition = Number(@fit_p())
-      is_fit_invalid = !check_split_valid(fit_partition)
-      @fit_invalid(is_fit_invalid)
-      sum_partition = fit_partition + cross_partition + fit_partition
-      is_invalid_partition = is_fit_invalid ||
-        @cross_invalid() ||
-        @fit_invalid() ||
+      fit_split_invalid = !check_split_valid(fit_partition)
+      @fit_invalid(fit_split_invalid)
+      sum_partition = fit_partition
+      is_invalid_partition =
+        fit_split_invalid ||
         sum_partition < 0 ||
         sum_partition > 100
       if is_invalid_partition
@@ -50,9 +47,12 @@ ko.components.register "tf-fit-data-partition",
           data_rows = model().rows.length
           partition_percentage = fit_partition / 100
           num_rows = Math.round(data_rows * partition_percentage)
-          start_row = @fit_row_start() || 1
-          if (@fit_row_start() == undefined)
-            @fit_row_start(1)
+          init_start_row = @fit_row_start()
+          start_row = if init_start_row
+          then init_start_row
+          else 1
+          if init_start_row == undefined
+            @fit_row_start(start_row)
           end_row = if data_rows <= start_row + num_rows then data_rows else start_row + num_rows
           @fit_row_end(end_row)
     
@@ -61,30 +61,30 @@ ko.components.register "tf-fit-data-partition",
       fit_row_end = Number(@fit_row_end())
       data_rows = model().rows.length
       if fit_row_start == undefined
-        @error_msg("Fit start row is not defined")
+        @error_msg("fit start row is not defined")
       else if fit_row_start < 1
-        @error_msg("Fit start row has to be at least 1")
+        @error_msg("fit start row has to be at least 1")
       else if fit_row_start > data_rows
-        @error_msg("Fit start row has to be less than or equal to " + data_rows)
+        @error_msg("fit start row has to be less than or equal to " + data_rows)
       else if fit_row_start > fit_row_end
-        @error_msg("Fit start row has to be less than the fit end row")
+        @error_msg("fit start row has to be less than the fit end row")
       else
         partition_percentage = Math.round((fit_row_end - fit_row_start + 1) / data_rows * 100)
         @fit_p(partition_percentage)
         @error_msg(undefined)
-    
+
     @change_fit_end_row = ( ) ->
       fit_row_start = Number(@fit_row_start())
       fit_row_end = Number(@fit_row_end())
       data_rows = model().rows.length
       if fit_row_end == undefined
-        @error_msg("Fit end row is not defined")
+        @error_msg("fit end row is not defined")
       else if fit_row_end < 1
-        @error_msg("Fit end row has to be at least 1")
+        @error_msg("fit end row has to be at least 1")
       else if fit_row_end > data_rows
-        @error_msg("Fit end row has to be less than or equal to " + data_rows)
+        @error_msg("fit end row has to be less than or equal to " + data_rows)
       else if fit_row_start > fit_row_end
-        @error_msg("Fit end row has to be less than the fit end row")
+        @error_msg("fit end row has to be less than the fit end row")
       else
         partition_percentage = Math.round((fit_row_end - fit_row_start + 1) / data_rows * 100)
         @fit_p(partition_percentage)
@@ -96,6 +96,7 @@ ko.components.register "tf-fit-data-partition",
         false
       else
         num >= start && num <= end
+
     
     @import_fit_dataset = ( ) ->
       fit_p = Number(@fit_p()) || 0
@@ -128,6 +129,10 @@ ko.components.register "tf-fit-data-partition",
         fit_row_end,
       )
       return true
+    
+    @close_window = ( ) ->
+      @show_partition(false)
+      window.location.reload()
 
     # Check if data partition popup should render
     @active = ko.computed ( ) =>

@@ -140,3 +140,9 @@ module.exports = new class WorkerAdapter extends ME
 
   clear: ( ) ->
     @post "clear"
+
+  reset: ( ) ->
+    @post "reset"
+
+  terminate: ( ) ->
+    @post "terminate"
