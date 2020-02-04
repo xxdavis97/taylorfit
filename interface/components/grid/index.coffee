@@ -194,7 +194,19 @@ ko.components.register "tf-grid",
 
     @save = ( ) =>
       cols = @cols(); rows = @rows(); extra = @extra()
-      csv = @cols().map(( v ) -> v.name).join ","
+      means = @mean(); sds = @sd(); mins = @min(); max = @max(); rms = @rms(); med = @med(); first = @firstQuartile();
+      third = @thirdQuartile();
+      console.log(third);
+      csv = "Mean," + means.join ","
+      csv += "\nSD," + sds.join ","
+      csv += "\nRMS," + rms.join ","
+      csv += "\nMin," + mins.join ","
+      csv += "\n25%," + first.join ","
+      csv += "\nMed," + med.join ","
+      csv += "\n75%," + third.join ","
+      csv += "\nMax," + max.join ","
+      csv += "\nIndex,"
+      csv += @cols().map(( v ) -> v.name).join ","
       if extra
         csv += ",Dependent,Predicted,Residual"
       if @sensitivityColumns().length > 0
@@ -202,7 +214,8 @@ ko.components.register "tf-grid",
       if @importanceRatioColumns().length > 0
         csv += "," + @importanceRatioColumns().map((col) -> "Importance Ratio "+col.name).join ","
       for row, index in rows
-        csv += "\n" + row.join ","
+        csv += "\n" + (index + 1).toString() + ","
+        csv += row.join ","
         if extra then csv += "," + extra[index].join ","
         if @sensitivityData().length > 0
           csv += "," + @sensitivityData().map((col) -> col[index]).join ","
