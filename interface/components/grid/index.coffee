@@ -16,11 +16,9 @@ ko.components.register "tf-grid",
     @name = params.name
     @table = params.table
     @hidden = params.hidden
-    @start = ko.observable 0
+    @start = 0
     @end = ko.observable 0
     @precision = ko.precision
-
-
     model       = params.model() # now static
     @dependent  = model.dependent
     @hiddenColumns = model.hiddenColumns
@@ -241,7 +239,7 @@ ko.components.register "tf-grid",
       rowLength = @rows().length;
       @rows().forEach( (row) -> 
         if !totals.length
-          totals = row;
+          totals = row.slice(0);
         else 
           i = 0
           row.forEach( (dataPoint) ->
@@ -347,22 +345,11 @@ ko.components.register "tf-grid",
       )
       return result;
 
-    @rms = ( ) =>
-      result = []
-      @colData.forEach( (col) ->
-        squares = col.map((val) => (val*val)); 
-        sum = squares.reduce((acum, val) => (acum + val));    
-        mean = sum/col.length; 
-        result.push(Math.sqrt(mean)); 
-      )
-      return result;
-     
-
     @min = ( ) ->
       min = [];
       @rows().forEach( (row) ->
         if !min.length 
-          min = row
+          min = row.slice(0)
         else
           i = 0;
           row.forEach( (dataPoint) -> 
@@ -374,12 +361,11 @@ ko.components.register "tf-grid",
       )
       return min;
 
-    # TODO: Gets called twice for some reason and replaces row 1
     @max = ( ) ->
       max = [];
       @rows().forEach( (row) ->
         if !max.length 
-          max = row
+          max = row.slice(0)
         else
           i = 0;
           row.forEach( (dataPoint) -> 
@@ -391,15 +377,21 @@ ko.components.register "tf-grid",
       )
       return max;
 
-    console.log(params.model);
-
+    @rms = ( ) =>
+      result = []
+      @colData.forEach( (col) ->
+        squares = col.map((val) => (val*val)); 
+        sum = squares.reduce((acum, val) => (acum + val));    
+        mean = sum/col.length; 
+        result.push(Math.sqrt(mean)); 
+      )
+      return result;
 
     @cols.subscribe ( next ) =>
       if next then adapter.unsubscribeToChanges()
       else adapter.subscribeToChanges()
     
     @rows.subscribe ( next ) =>
-      console.log(next);
       if next then adapter.unsubscribeToChanges()
       else adapter.subscribeToChanges()
 

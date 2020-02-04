@@ -313,6 +313,22 @@ table.grid
       // /ko
     // /ko
 
+    //- //ko if: toggle
+    //- tr
+    //-   td.static 1
+
+    //-   // ko foreach: populateLastRow()
+    //-   td(data-bind="style:{background: $component.isHidden($index()) ? '#DCDCDC' : '#FFFFFF'}")
+    //-     //ko if: ($data !== null && $data !== "" && $data !== 0)
+    //-     span(data-bind="text:$component.round_cell($data)")
+    //-     // /ko
+    //-     // ko if: ($data === null || $data === "" || $data === 0)
+    //-     span.placeholder No Data
+    //-     // /ko
+
+    //-   // /ko
+    //- // /ko
+
     // ko iter:{from:start,to:end}
     tr
       td.static
