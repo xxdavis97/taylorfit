@@ -236,17 +236,31 @@ ko.components.register "tf-grid",
 
     @mean = ( ) ->
       totals = []
-      rowLength = @rows().length;
-      @rows().forEach( (row) -> 
+      rowLength = @rows().length
+      k = 0
+      rows = @rows()
+      extra = @extra()
+      while k < rowLength
         if !totals.length
-          totals = row.slice(0);
-        else 
+          totals = rows[k].slice(0)
+          if extra
+            extra[k].forEach( (dataPoint) ->
+              totals.push(dataPoint)
+            )
+        else
           i = 0
-          row.forEach( (dataPoint) ->
-            totals[i] = totals[i] + dataPoint;
+          j = 0
+          while j < rows[k].length
+            totals[i] = totals[i] + rows[k][j]
             i++;
-          )
-      )
+            j++;
+          j = 0
+          if extra
+            while j < extra[k].length
+              totals[i] = totals[i] + extra[k][j]
+              i++;
+              j++;
+        k++
       i = 0
       totals.forEach( (total) ->
         totals[i] = total/(rowLength);
@@ -256,31 +270,45 @@ ko.components.register "tf-grid",
     
     @flipMean = ( ) ->
       @toggleMean = !@toggleMean
-      console.log(@toggleMean);
 
     @hasMean = ( ) ->
-      console.log(@toggleMean);
       return @toggleMean;
 
     @getColData = ( ) ->
       master = [];
-      @rows().forEach( (row) -> 
-        if (master.length == 0)
-          row.forEach( (dataPoint) ->
-            master.push([dataPoint]);
+      k = 0
+      rows = @rows()
+      extra = @extra()
+      while k < rows.length
+        if master.length == 0
+          rows[k].forEach( (dataPoint) -> 
+            master.push([dataPoint])
           )
+          if extra
+            extra[k].forEach( (dataPoint) -> 
+              master.push([dataPoint])
+            )
         else
-          i = 0;
-          row.forEach( (dataPoint) ->
-            master[i].push(dataPoint);
+          i = 0
+          j = 0
+          while j < rows[k].length
+            master[i].push(rows[k][j])
             i++;
-          )
-      )
+            j++;
+          j = 0
+          if extra
+            while j < extra[k].length
+              master[i].push(extra[k][j])
+              i++;
+              j++;
+        k++
       return master;
     
     @colData = @getColData();
 
     @med = ( ) ->
+      if @colData.length == @rows()[0].length
+        @colData = @getColData();
       result = [];
       @colData.forEach( (col) -> 
         col = col.sort( (a, b) ->
@@ -295,6 +323,8 @@ ko.components.register "tf-grid",
       return result;
 
     @firstQuartile = ( ) ->
+      if @colData.length == @rows()[0].length
+        @colData = @getColData();
       result = [];
       @colData.forEach( (col) ->
         col = col.sort( (a, b) ->
@@ -311,6 +341,8 @@ ko.components.register "tf-grid",
       return result;
 
     @thirdQuartile = ( ) ->
+      if @colData.length == @rows()[0].length
+        @colData = @getColData();
       result = [];
       @colData.forEach( (col) ->
         col = col.sort( (a, b) ->
@@ -327,6 +359,8 @@ ko.components.register "tf-grid",
       return result;
     
     @sd = ( ) => 
+      if @colData.length == @rows()[0].length
+        @colData = @getColData();
       result = []
       means = @mean();
       i = 0;
@@ -346,38 +380,70 @@ ko.components.register "tf-grid",
       return result;
 
     @min = ( ) ->
-      min = [];
-      @rows().forEach( (row) ->
-        if !min.length 
-          min = row.slice(0)
+      min = []
+      rowLength = @rows().length
+      k = 0
+      rows = @rows()
+      extra = @extra()
+      while k < rowLength
+        if !min.length
+          min = rows[k].slice(0)
+          if extra
+            extra[k].forEach( (dataPoint) ->
+              min.push(dataPoint)
+            )
         else
-          i = 0;
-          row.forEach( (dataPoint) -> 
-            if dataPoint < min[i]
-              min[i] = dataPoint;
-
+          i = 0
+          j = 0
+          while j < rows[k].length
+            if rows[k][j] < min[i]
+              min[i] = rows[k][j]
             i++;
-          )
-      )
+            j++;
+          j = 0
+          if extra
+            while j < extra[k].length
+              if extra[k][j] < min[i]
+                min[i] = extra[k][j]
+              i++;
+              j++;
+        k++
       return min;
 
     @max = ( ) ->
-      max = [];
-      @rows().forEach( (row) ->
-        if !max.length 
-          max = row.slice(0)
+      max = []
+      rowLength = @rows().length
+      k = 0
+      rows = @rows()
+      extra = @extra()
+      while k < rowLength
+        if !max.length
+          max = rows[k].slice(0)
+          if extra
+            extra[k].forEach( (dataPoint) ->
+              max.push(dataPoint)
+            )
         else
-          i = 0;
-          row.forEach( (dataPoint) -> 
-            if dataPoint > max[i]
-              max[i] = dataPoint;
-
+          i = 0
+          j = 0
+          while j < rows[k].length
+            if rows[k][j] > max[i]
+              max[i] = rows[k][j]
             i++;
-          )
-      )
+            j++;
+          j = 0
+          if extra
+            while j < extra[k].length
+              if extra[k][j] > max[i]
+                max[i] = extra[k][j]
+              i++;
+              j++;
+        k++
       return max;
 
     @rms = ( ) =>
+      if @colData.length == @rows()[0].length
+        @colData = @getColData();
       result = []
       @colData.forEach( (col) ->
         squares = col.map((val) => (val*val)); 
