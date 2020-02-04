@@ -196,7 +196,6 @@ ko.components.register "tf-grid",
       cols = @cols(); rows = @rows(); extra = @extra()
       means = @mean(); sds = @sd(); mins = @min(); max = @max(); rms = @rms(); med = @med(); first = @firstQuartile();
       third = @thirdQuartile();
-      console.log(third);
       csv = "Mean," + means.join ","
       csv += "\nSD," + sds.join ","
       csv += "\nRMS," + rms.join ","
