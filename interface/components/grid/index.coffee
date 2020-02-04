@@ -391,11 +391,15 @@ ko.components.register "tf-grid",
       )
       return max;
 
+    console.log(params.model);
+
+
     @cols.subscribe ( next ) =>
       if next then adapter.unsubscribeToChanges()
       else adapter.subscribeToChanges()
     
     @rows.subscribe ( next ) =>
+      console.log(next);
       if next then adapter.unsubscribeToChanges()
       else adapter.subscribeToChanges()
 
