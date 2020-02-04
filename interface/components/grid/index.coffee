@@ -240,6 +240,8 @@ ko.components.register "tf-grid",
       k = 0
       rows = @rows()
       extra = @extra()
+      sensitive = @sensitivityData()
+      importance = @importanceRatioData()
       while k < rowLength
         if !totals.length
           totals = rows[k].slice(0)
@@ -247,6 +249,12 @@ ko.components.register "tf-grid",
             extra[k].forEach( (dataPoint) ->
               totals.push(dataPoint)
             )
+          sensitive.forEach( (col) ->
+            totals.push(col[0])
+          )
+          importance.forEach( (col) -> 
+            totals.push(col[0]);
+          )
         else
           i = 0
           j = 0
@@ -260,6 +268,20 @@ ko.components.register "tf-grid",
               totals[i] = totals[i] + extra[k][j]
               i++;
               j++;
+          sensitive.forEach( (col) -> 
+            iter = 1
+            while iter < col.length
+              totals[i] = totals[i] + col[iter]
+              iter++
+            i++
+          )
+          importance.forEach( (col) ->
+            iter = 1
+            while iter < col.length
+              totals[i] = totals[i] + col[iter]
+              iter++
+            i++
+          )
         k++
       i = 0
       totals.forEach( (total) ->
@@ -279,6 +301,8 @@ ko.components.register "tf-grid",
       k = 0
       rows = @rows()
       extra = @extra()
+      sensitive = @sensitivityData()
+      importance = @importanceRatioData()
       while k < rows.length
         if master.length == 0
           rows[k].forEach( (dataPoint) -> 
@@ -302,6 +326,12 @@ ko.components.register "tf-grid",
               i++;
               j++;
         k++
+      sensitive.forEach( (col) -> 
+        master.push(Object.values(col))
+      )
+      importance.forEach( (col) ->
+        master.push(Object.values(col))
+      )
       return master;
     
     @colData = @getColData();
@@ -366,16 +396,9 @@ ko.components.register "tf-grid",
       i = 0;
       @colData.forEach( (col) ->
         mean = means[i];
-        sd = 0;
-        col.forEach( (num) ->
-          if sd == 0
-            sd = num;
-          else 
-            sd += ((num-mean)*(num-mean));
-        )
-        sd = sd / col.length
-        result.push(Math.sqrt(sd));
-        i++;
+        result.push(Math.sqrt(col.reduce((sq, n) ->
+          return sq + Math.pow(n-mean,2);
+        , 0) / (col.length - 1)))
       )
       return result;
 
@@ -385,6 +408,8 @@ ko.components.register "tf-grid",
       k = 0
       rows = @rows()
       extra = @extra()
+      sensitive = @sensitivityData()
+      importance = @importanceRatioData()
       while k < rowLength
         if !min.length
           min = rows[k].slice(0)
@@ -392,6 +417,12 @@ ko.components.register "tf-grid",
             extra[k].forEach( (dataPoint) ->
               min.push(dataPoint)
             )
+          sensitive.forEach( (col) ->
+            min.push(col[0])
+          )
+          importance.forEach( (col) -> 
+            min.push(col[0]);
+          )
         else
           i = 0
           j = 0
@@ -407,6 +438,22 @@ ko.components.register "tf-grid",
                 min[i] = extra[k][j]
               i++;
               j++;
+          sensitive.forEach( (col) -> 
+            iter = 1
+            while iter < col.length
+              if col[iter] < min[i]
+                min[i] = col[iter]
+              iter++
+            i++
+          )
+          importance.forEach( (col) ->
+            iter = 1
+            while iter < col.length
+              if col[iter] < min[i]
+                min[i] = col[iter]
+              iter++
+            i++
+          )
         k++
       return min;
 
@@ -416,6 +463,8 @@ ko.components.register "tf-grid",
       k = 0
       rows = @rows()
       extra = @extra()
+      sensitive = @sensitivityData()
+      importance = @importanceRatioData()
       while k < rowLength
         if !max.length
           max = rows[k].slice(0)
@@ -423,6 +472,12 @@ ko.components.register "tf-grid",
             extra[k].forEach( (dataPoint) ->
               max.push(dataPoint)
             )
+          sensitive.forEach( (col) ->
+            max.push(col[0])
+          )
+          importance.forEach( (col) -> 
+            max.push(col[0]);
+          )
         else
           i = 0
           j = 0
@@ -438,6 +493,22 @@ ko.components.register "tf-grid",
                 max[i] = extra[k][j]
               i++;
               j++;
+          sensitive.forEach( (col) -> 
+            iter = 1
+            while iter < col.length
+              if col[iter] > max[i]
+                max[i] = col[iter]
+              iter++
+            i++
+          )
+          importance.forEach( (col) ->
+            iter = 1
+            while iter < col.length
+              if col[iter] > max[i]
+                max[i] = col[iter]
+              iter++
+            i++
+          )
         k++
       return max;
 
@@ -464,5 +535,5 @@ ko.components.register "tf-grid",
     @precision.subscribe ( next ) =>
       if next then adapter.unsubscribeToChanges()
       else adapter.subscribeToChanges()
-
+    
     return this
