@@ -337,7 +337,9 @@ ko.components.register "tf-grid",
     @colData = @getColData();
 
     @med = ( ) ->
-      if @colData.length == @rows()[0].length
+      if (@colData.length == @rows()[0].length)
+        @colData = @getColData();
+      if @extra() && (@colData.length == (@rows()[0].length + @extra()[0].length))
         @colData = @getColData();
       result = [];
       @colData.forEach( (col) -> 
@@ -353,7 +355,9 @@ ko.components.register "tf-grid",
       return result;
 
     @firstQuartile = ( ) ->
-      if @colData.length == @rows()[0].length
+      if (@colData.length == @rows()[0].length)
+        @colData = @getColData();
+      if @extra() && (@colData.length == (@rows()[0].length + @extra()[0].length))
         @colData = @getColData();
       result = [];
       @colData.forEach( (col) ->
@@ -371,7 +375,9 @@ ko.components.register "tf-grid",
       return result;
 
     @thirdQuartile = ( ) ->
-      if @colData.length == @rows()[0].length
+      if (@colData.length == @rows()[0].length)
+        @colData = @getColData();
+      if @extra() && (@colData.length == (@rows()[0].length + @extra()[0].length))
         @colData = @getColData();
       result = [];
       @colData.forEach( (col) ->
@@ -389,7 +395,9 @@ ko.components.register "tf-grid",
       return result;
     
     @sd = ( ) => 
-      if @colData.length == @rows()[0].length
+      if (@colData.length == @rows()[0].length)
+        @colData = @getColData();
+      if @extra() && (@colData.length == (@rows()[0].length + @extra()[0].length))
         @colData = @getColData();
       result = []
       means = @mean();
@@ -513,7 +521,9 @@ ko.components.register "tf-grid",
       return max;
 
     @rms = ( ) =>
-      if @colData.length == @rows()[0].length
+      if (@colData.length == @rows()[0].length)
+        @colData = @getColData();
+      if @extra() && (@colData.length == (@rows()[0].length + @extra()[0].length))
         @colData = @getColData();
       result = []
       @colData.forEach( (col) ->
