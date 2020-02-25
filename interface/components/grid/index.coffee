@@ -41,6 +41,7 @@ ko.components.register "tf-grid",
     @clear = ( ) =>
       try @rows null
       try @result null
+      window.location.reload()
       return undefined
 
     @histogram = ( index ) ->
