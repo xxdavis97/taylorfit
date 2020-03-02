@@ -311,10 +311,10 @@ ko.components.register "tf-grid",
     @getColData = ( ) ->
       master = [];
       k = 0
-      rows = @rows()
-      extra = @extra()
-      sensitive = @sensitivityData()
-      importance = @importanceRatioData()
+      rows = @rows();
+      extra = @extra();
+      sensitive = @sensitivityData();
+      importance = @importanceRatioData();
       while k < rows.length
         if master.length == 0
           rows[k].forEach( (dataPoint) -> 
@@ -351,7 +351,7 @@ ko.components.register "tf-grid",
     @med = ( ) ->
       if (@colData.length == @rows()[0].length)
         @colData = @getColData();
-      if @extra() && (@colData.length == (@rows()[0].length + @extra()[0].length))
+      if @extra()
         @colData = @getColData();
       result = [];
       @colData.forEach( (col) -> 
@@ -369,7 +369,7 @@ ko.components.register "tf-grid",
     @firstQuartile = ( ) ->
       if (@colData.length == @rows()[0].length)
         @colData = @getColData();
-      if @extra() && (@colData.length == (@rows()[0].length + @extra()[0].length))
+      if @extra()
         @colData = @getColData();
       result = [];
       @colData.forEach( (col) ->
@@ -389,7 +389,7 @@ ko.components.register "tf-grid",
     @thirdQuartile = ( ) ->
       if (@colData.length == @rows()[0].length)
         @colData = @getColData();
-      if @extra() && (@colData.length == (@rows()[0].length + @extra()[0].length))
+      if @extra()
         @colData = @getColData();
       result = [];
       @colData.forEach( (col) ->
@@ -409,7 +409,7 @@ ko.components.register "tf-grid",
     @sd = ( ) => 
       if (@colData.length == @rows()[0].length)
         @colData = @getColData();
-      if @extra() && (@colData.length == (@rows()[0].length + @extra()[0].length))
+      if @extra()
         @colData = @getColData();
       result = []
       means = @mean();
@@ -535,7 +535,7 @@ ko.components.register "tf-grid",
     @rms = ( ) =>
       if (@colData.length == @rows()[0].length)
         @colData = @getColData();
-      if @extra() && (@colData.length == (@rows()[0].length + @extra()[0].length))
+      if @extra()
         @colData = @getColData();
       result = []
       @colData.forEach( (col) ->
