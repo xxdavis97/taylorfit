@@ -34,14 +34,8 @@ ko.components.register "tf-grid",
 
     @sensitivityColumns  = model.sensitivityColumns
     @sensitivityData   = model.sensitivityData
-
-    console.log("\n\n\n\n\n\n\n\n")
-    console.log(@sensitivityData())
-
     @importanceRatioColumns  = model.importanceRatioColumns
     @importanceRatioData   = model.importanceRatioData
-    console.log("\n\n\n\n\n\n\n\n")
-    console.log(@importanceRatioData())
 
     @clear = ( ) =>
       try @rows null
