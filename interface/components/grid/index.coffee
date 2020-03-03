@@ -16,7 +16,7 @@ ko.components.register "tf-grid",
     @name = params.name
     @table = params.table
     @hidden = params.hidden
-    @start = 0
+    @start = ko.observable 0
     @end = ko.observable 0
     @precision = ko.precision
     model       = params.model() # now static
