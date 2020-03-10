@@ -34,7 +34,6 @@ ko.components.register "tf-grid",
 
     @sensitivityColumns  = model.sensitivityColumns
     @sensitivityData   = model.sensitivityData
-
     @importanceRatioColumns  = model.importanceRatioColumns
     @importanceRatioData   = model.importanceRatioData
 

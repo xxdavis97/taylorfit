@@ -516,20 +516,6 @@ class Model extends CacheMixin(Observable) {
     return this;
   }
 
-  ComputeConfidenceIntervals(index, label=FIT_LABEL) {
-    if (index == undefined) {
-      return this;
-    }
-    let i =0;
-    let model = this;
-    let num_rows = model[_data][FIT_LABEL].shape[0];
-    let terms = this.terms.forEach(function (t){
-      t * num_rows[i];
-      i++;
-    });
-
-  }
-
   get labels() {
     return Object.keys(this[_subsets])
       .filter((data_label) => this[_subsets][data_label]);
