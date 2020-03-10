@@ -215,6 +215,7 @@ module.exports = class Model
           stats: model.stats
           predicted: model.predicted
       , 100
+    
     adapter.on "model:cross", ( model ) =>
       setTimeout =>
         @result_cross

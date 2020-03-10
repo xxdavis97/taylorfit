@@ -24,7 +24,7 @@ ko.components.register "tf-settings",
       expects [model] to be observable"
 
     model = params.model() # now static
-
+    @rows = model.data_fit();
     @active = model.show_settings
 
     @exponents = model.exponents
@@ -135,5 +135,237 @@ ko.components.register "tf-settings",
       ko.precision(5)
       # Clear the selected stats to the default
       allstats().forEach((stat) => stat.selected(stat.default))
+    
+    @getColData = ( ) =>
+      master = [];
+      k = 0
+      rows = @rows;
+      while k < rows.length
+        if master.length == 0
+          rows[k].forEach( (dataPoint) -> 
+            master.push([dataPoint])
+          )
+        else
+          i = 0
+          j = 0
+          while j < rows[k].length
+            master[i].push(rows[k][j])
+            i++;
+            j++;
+        k++
+      return master;
+
+# calculte tstat solution
+
+    # @mean = (data, popOrSample) =>
+    #   total = 0
+    #   data.forEach( (point) ->
+    #     total += point;
+    #   )
+    #   if popOrSample
+    #     return total / (data.length)
+    #   else 
+    #     return total / (data.length - 1)
+
+    # @sd = (data) => 
+    #   total = 0
+    #   data.forEach( (point) ->
+    #     total += point
+    #   )
+    #   mean = total / data.length;
+    #   result = Math.sqrt(data.reduce((sq, n) ->
+    #       return sq + Math.pow(n-mean,2);
+    #     , 0) / (data.length - 1));
+    #   return result;
+
+    # @calculateTStat = ( ) =>
+    #   colData = @getColData();
+    #   terms = model.result_fit().terms
+    #   terms.forEach( (term) ->
+    #     if term.term.length > 1
+    #       x = 0
+    #     else
+    #       index = term.term[0].index;
+    #       exp = term.term[0].exp;
+    #       col = colData[index];
+    #       calc = [];
+    #       col.forEach( (data) ->
+    #         calc.push(Math.pow(data,exp));
+    #       )
+    #       len = calc.length;
+    #       total = 0;
+    #       calc.forEach( (point) ->
+    #         total += point;
+    #       )
+    #       popMean = total / len;
+    #       sampleMean = total / (len - 1);
+    #       num = popMean - sampleMean;
+    #       sd = Math.sqrt(calc.reduce((sq, n) ->
+    #           return sq + Math.pow(n-sampleMean,2);
+    #         , 0) / (len - 1));
+    #       denom = sd / Math.sqrt(len);
+    #       console.log(num/denom);
+    #   )
+      # console.log(model);
+      # console.log(model.result_fit());
+      # console.log(model.data_fit());
+    # @calculateTStat();
+    # @calculateRSq = ( ) ->
+    # @calculatePVal = ( ) ->
+
+    @removeLargestPAboveAlpha = ( ) ->
+      termsInModel = model.result_fit().terms;
+      alpha = model().psig();
+      largestP = null;
+      termsInModel.forEach( (term) ->
+        if (term.stats.pt > alpha && largestP == null)
+          largestP = term;
+        else if (term.stats.pt > alpha && term.stats.pt > largestP)
+          largestP = term;
+      )
+      if largestP != null
+        removedTerm = [[largestP.term[0].index, largestP.term[0].exp, largestP.term[0].lag]];
+        index = 0;
+        for term in termsInModel
+          consolidatedTerm = [[term.term[0].index, term.term[0].exp, term.term[0].lag]]
+          if JSON.stringify(consolidatedTerm[0]) == JSON.stringify(removedTerm[0])
+            break
+          else
+            index += 1;
+        model.result_fit().terms.splice(index, 1);
+        adapter.subscribeToChanges();
+        adapter.removeTerm(removedTerm);
+        # adapter.unsubscribeToChanges();
+
+    @checkIfTermAboveAlpha = ( ) ->
+      termsInModel = model.result_fit().terms;
+      alpha = params.model().psig();
+      returnVal = false;
+      termsInModel.forEach( (term) ->
+        if (term.stats.pt > alpha) 
+          returnVal = true;
+      )
+      return returnVal;
+
+    @addSmallestPBelowAlpha = ( ) ->
+      alpha = model.psig();
+      crossRsq = model.result_cross().stats.Rsq;
+      smallestP = null;
+      model.candidates().forEach( (candidate) ->
+        if (candidate.stats.pt < alpha && smallestP == null && candidate.stats.Rsq > crossRsq)
+          smallestP = candidate;
+        else if (candidate.stats.pt < alpha && candidate.stats.pt < smallestP && candidate.stats.Rsq > crossRsq)
+          smallestP = candidate;
+      )
+      if smallestP != null
+        addedTerm = [[smallestP.term[0].index, smallestP.term[0].exp, smallestP.term[0].lag]];
+        model.result_fit().terms.push(smallestP);
+        index = 0;
+        for candidate in model.candidates()
+          consolidatedTerm = [[candidate.term[0].index, candidate.term[0].exp, candidate.term[0].lag]]
+          if JSON.stringify(consolidatedTerm[0]) == JSON.stringify(addedTerm[0])
+            break
+          else
+            index += 1;
+        model.candidates().splice(index, 1);
+        adapter.subscribeToChanges();
+        adapter.addTerm(addedTerm);
+        # console.log(model);
+        # adapter.unsubscribeToChanges();
+
+    @checkIfCandidateToBeAdded = ( ) ->
+      crossRsq = model.result_cross().stats.Rsq;
+      alpha = model.psig();
+      returnVal = false;
+      model.candidates().forEach( (candidate) ->
+        if (candidate.stats.pt < alpha && candidate.stats.Rsq > crossRsq)
+          returnVal = true
+      )
+      return returnVal;
+
+    @performRemoveCycle = ( ) ->
+      while true 
+        condition = @checkIfTermAboveAlpha();
+        if condition == true 
+          @removeLargestPAboveAlpha();
+        else
+          break
+      adapter.subscribeToChanges();
+
+    @performAddCycle = ( ) ->
+      while true
+        condition = @checkIfCandidateToBeAdded();
+        if condition == true
+          @addSmallestPBelowAlpha();
+        else 
+          break
+      adapter.subscribeToChanges();
+
+    # console.log(sessionStorage.getItem("onReload") == 'removeCycle');
+    # if sessionStorage.getItem('onReload') == 'removeCycle'
+    #   console.log("Session remove");
+    #   sessionStorage.setItem('onReload', '');
+    #   @performRemoveCycle();
+
+    @runAddRemoveCycle = ( ) ->
+      @performAddCycle();
+      @performRemoveCycle();
+
+
+    @autofit = ( ) ->
+      # params.model().candidates() represents the potential pool of choices to add to the model from the right panel
+      # Can get p(t) and adjR2 with .stats.pt or .stats.adjRsq
+      # console.log(params.model().candidates());
+
+      # params.model().result_fit().terms gets you the current terms of the model
+      # console.log(params.model().result_fit().terms);
+
+      # params.model().result_fit().terms[index of term].stats gives t and p(t) of the term (P(t) cant be above alpha)
+      # console.log(params.model().result_fit().terms[0].stats);
+
+      # params.model().multiplicands() gets you number of multiplicands set
+      # console.log(params.model().multiplicands());
+
+      # params.model().exponents() gets you a dictionary with exponents {1: true, 2: true, -1: true} etc.
+      # console.log(params.model().exponents());
+
+      # params.model().psig() gives you value of alpha
+      # console.log(params.model().psig());
+
+      # Also see something for setMultiplicands and setExponents
+
+
+      # @performRemoveCycle();
+      # Need rsq of candidate to be better than rsq of cross set and need p<alpha then pick lowest p/highest rsq
+
+
+      # @performAddCycle();
+      # @performRemoveCycle();
+
+
+      # Need to update the pvalues after adding otherwise remove wont work
+      # console.log("add");
+      # adapter.subscribeToChanges();
+      # console.log(adapter);
+      # console.log(adapter.listeners["model:fit"][0]);
+      # @performAddCycle();
+      # console.log(adapter);
+      # adapter.listeners["model:fit"][0]("fit");
+      # console.log(adapter.listeners["stats"][0]("fit"));
+      # console.log(params.model().result_fit());
+      # console.log(allstats());
+      # adapter.post(postMessage({ type: `model:fit`, data: m.getModel("fit") }))
+      @runAddRemoveCycle();
+
+
+
+      # setTimeout("", 20000);
+      # sessionStorage.setItem('onReload', 'removeCycle');
+      # if sessionStorage.getItem('onReload') == 'removeCycle'
+      #   console.log("Session remove");
+      #   sessionStorage.setItem('onReload', '');
+      #   setTimeout(@performRemoveCycle(), 5000);
+      # setTimeout(location.reload(), 10000);
+      # @performRemoveCycle();
 
     return this
