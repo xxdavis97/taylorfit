@@ -132,7 +132,7 @@ function initializeModel() {
 
 // Whenever a parameter changes, let's update the UI
 let subscriptionIds = [];
-let subscribeToChanges = (m, updateNow = true) => {
+let subscribeToChanges = (m, updateNow = false) => {
   m.removeListener(subscriptionIds);
 
   subscriptionIds = m.on([
@@ -155,7 +155,7 @@ let subscribeToChanges = (m, updateNow = true) => {
 let unsubscribeToChanges = (m) => m.removeListener(subscriptionIds);
 
 // By default, subscribe
-subscribeToChanges(m, false);
+//subscribeToChanges(m, false);
 
 /**
  * Function calls off subscription handler from engine/model.js

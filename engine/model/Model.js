@@ -6,6 +6,7 @@ const statistics      = require('../statistics');
 const utils           = require('../utils');
 const perf            = require('../perf');
 const Observable      = require('../observable');
+const exceljs         = require('exceljs');
 const {
   FIT_LABEL,
   CROSS_LABEL,
@@ -515,12 +516,27 @@ class Model extends CacheMixin(Observable) {
     return this;
   }
 
+  ComputeConfidenceIntervals(index, label=FIT_LABEL) {
+    if (index == undefined) {
+      return this;
+    }
+    let i =0;
+    let model = this;
+    let num_rows = model[_data][FIT_LABEL].shape[0];
+    let terms = this.terms.forEach(function (t){
+      t * num_rows[i];
+      i++;
+    });
+
+  }
+
   get labels() {
     return Object.keys(this[_subsets])
       .filter((data_label) => this[_subsets][data_label]);
   }
 
   get terms() {
+    console.log(this[_terms].slice());
     return this[_terms].slice();
   }
 

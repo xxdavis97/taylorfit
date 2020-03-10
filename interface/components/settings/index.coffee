@@ -24,8 +24,12 @@ ko.components.register "tf-settings",
       expects [model] to be observable"
 
     model = params.model() # now static
+    
 
     @active = model.show_settings
+    
+    #model = model.show_settings(true)
+    
 
     @exponents = model.exponents
     @multiplicands = model.multiplicands
@@ -99,10 +103,13 @@ ko.components.register "tf-settings",
 
     @timeseries.subscribe ( next ) =>
       @lags { 0: true } unless next
+      
 
-    @active.subscribe ( next ) ->
+    @active.subscribe (next) ->
+      #if unchange then adapter.unsubscribeToChanges()
       if next then adapter.unsubscribeToChanges()
-      else adapter.subscribeToChanges()
+      if adapter.addTerm then adapter.subscribeToChanges()
+      
 
     @download_model = ( ) ->
       model = params.model()
