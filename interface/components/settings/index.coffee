@@ -24,12 +24,8 @@ ko.components.register "tf-settings",
       expects [model] to be observable"
 
     model = params.model() # now static
-<<<<<<< HEAD
     
 
-=======
-    @rows = model.data_fit();
->>>>>>> b4f21cbc15a568d91a661193ad0caf4531307bdc
     @active = model.show_settings
     
     #model = model.show_settings(true)
