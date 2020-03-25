@@ -107,9 +107,31 @@ ko.components.register "tf-settings",
 
     @active.subscribe (next) ->
       #if unchange then adapter.unsubscribeToChanges()
-      if next then adapter.unsubscribeToChanges()
-      if adapter.addTerm then adapter.subscribeToChanges()
+      #if next then adapter.unsubscribeToChanges()
+      adapter.unsubscribeToChanges()
+      #if (adapter.addTerm || adapter.removedTerm) then adapter.unsubscribeToChanges()
       
+
+    @recalculate = ( ) ->
+      #if ko.computed(true) then adapter.subscribeToChanges()
+      #@active.subscribe (next)
+      #if next then adapter.unsubscribeToChanges()
+      #if adapter.addTerm then adapter.unsubscribeToChanges()
+      #@active.subscribe(next)
+      #else adapter.subscribeToChanges()
+      
+      condition = @checkIfCandidateToBeAdded();
+      if condition == true
+        adapter.subscribeToChanges();
+        adapter.unsubscribeToChanges();
+      else 
+        adapter.unsubscribeToChanges();
+
+      
+
+
+    
+
 
     @download_model = ( ) ->
       model = params.model()
