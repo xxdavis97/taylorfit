@@ -39,6 +39,7 @@ ko.components.register "tf-settings",
     @currCross = model.result_cross();
     @currAlpha = model.psig();
     @clicked = false;
+    @runRemove = false;
 
     @candidates.subscribe( (r) =>
       if !@clicked
@@ -228,23 +229,30 @@ ko.components.register "tf-settings",
       condition = @checkIfTermAboveAlpha();
       if condition == true
         @removeLargestPAboveAlpha()
+      else
+        @clicked = false;
+        @runRemove = false;
       adapter.subscribeToChanges();
 
     @performAddCycle = ( ) ->
       condition = @checkIfCandidateToBeAdded();
       if condition == true
         @addSmallestPBelowAlpha();
+      else
+        @runRemove = true;
       adapter.subscribeToChanges();
 
     @runAddRemoveCycle = ( ) ->
       @performAddCycle();
-      @performRemoveCycle();
+      if @runRemove
+        @performRemoveCycle();
 
     @modelResult.subscribe( (r) =>
+      # console.log("\n\n\n\n\n\n\n\n\n\n\n\n\n", @clicked);
       if @clicked
-        console.log("\n\n\n\n\n\n\n\n");
-        console.log(r);
-        console.log("\n\n\n\n\n\n\n\n");
+        # console.log("\n\n\n\n\n\n\n\n");
+        # console.log(r);
+        # console.log("\n\n\n\n\n\n\n\n");
         if JSON.stringify(@currModel) != JSON.stringify(r)
           @currModel = r;
           @candidates.subscribe( (candidateRes) =>
@@ -252,18 +260,17 @@ ko.components.register "tf-settings",
               @currCandidates = candidateRes;
               @runAddRemoveCycle();
               # @crossResult.subscribe( (crossRes) =>
-              #   if JSON.stringify(@currCross) != JSON.stringify(crossRes)
-              #     @currCross = crossRes;
+              # if JSON.stringify(@currCross) != JSON.stringify(crossRes)
+                  # @currCross = crossRes;
               #     @performAddCycle();
-              #     # @runAddRemoveCycle();
+                  # @runAddRemoveCycle();
               #   else
               #     @clicked = false;
               # )
             # else
             #   @clicked = false;
           )
-        # else
-        #   @clicked = false;
+          # @clicked = false;
       else
         @currModel = r;
     )
