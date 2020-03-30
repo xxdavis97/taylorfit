@@ -167,6 +167,22 @@ ko.components.register "tf-settings",
       # Clear the selected stats to the default
       allstats().forEach((stat) => stat.selected(stat.default))
 
+    @updateExponents = () ->
+      currExponents = model.exponents();
+      console.log(currExponents);
+      @clicked = false;
+    
+    @updateMultiplicands = () ->
+      # model.exponents({1: true})
+      # model.multiplicands(1)
+      currNumMultiplicands = model.multiplicands();
+      console.log(currNumMultiplicands);
+      if currNumMultiplicands < 2
+        model.multiplicands(currNumMultiplicands + 1);
+        @performAddCycle();
+      else
+        @updateExponents();
+
     @removeLargestPAboveAlpha = () ->
       termsInModel = @currModel.terms;
       alpha = @currAlpha;
@@ -230,7 +246,8 @@ ko.components.register "tf-settings",
       if condition == true
         @removeLargestPAboveAlpha()
       else
-        @clicked = false;
+        #update mult and exp then maybe when those are done have @clicked be false in those functions
+        @updateMultiplicands();
         @runRemove = false;
       adapter.subscribeToChanges();
 
@@ -248,11 +265,7 @@ ko.components.register "tf-settings",
         @performRemoveCycle();
 
     @modelResult.subscribe( (r) =>
-      # console.log("\n\n\n\n\n\n\n\n\n\n\n\n\n", @clicked);
       if @clicked
-        # console.log("\n\n\n\n\n\n\n\n");
-        # console.log(r);
-        # console.log("\n\n\n\n\n\n\n\n");
         if JSON.stringify(@currModel) != JSON.stringify(r)
           @currModel = r;
           @candidates.subscribe( (candidateRes) =>
@@ -262,22 +275,15 @@ ko.components.register "tf-settings",
               # @crossResult.subscribe( (crossRes) =>
               # if JSON.stringify(@currCross) != JSON.stringify(crossRes)
                   # @currCross = crossRes;
-              #     @performAddCycle();
                   # @runAddRemoveCycle();
-              #   else
-              #     @clicked = false;
               # )
-            # else
-            #   @clicked = false;
           )
-          # @clicked = false;
       else
         @currModel = r;
     )
 
     @autofit = ( ) ->
       @clicked = true;
-      # console.log("\n\n\nHEY THIS IS @CLICKED", @clicked);
       @performAddCycle();
       # params.model().candidates() represents the potential pool of choices to add to the model from the right panel
       # Can get p(t) and adjR2 with .stats.pt or .stats.adjRsq
@@ -300,27 +306,5 @@ ko.components.register "tf-settings",
 
       # Also see something for setMultiplicands and setExponents
 
-
-      # @performRemoveCycle();
-      # Need rsq of candidate to be better than rsq of cross set and need p<alpha then pick lowest p/highest rsq
-
-
-      # @performAddCycle();
-      # @performRemoveCycle();
-
-
-      # Need to update the pvalues after adding otherwise remove wont work
-      # console.log("add");
-      # adapter.subscribeToChanges();
-      # console.log(adapter);
-      # console.log(adapter.listeners["model:fit"][0]);
-      # @performAddCycle();
-      # console.log(adapter);
-      # adapter.listeners["model:fit"][0]("fit");
-      # console.log(adapter.listeners["stats"][0]("fit"));
-      # console.log(params.model().result_fit());
-      # console.log(allstats());
-      # adapter.post(postMessage({ type: `model:fit`, data: m.getModel("fit") }))
-      # @runAddRemoveCycle();
 
     return this
