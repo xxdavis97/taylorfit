@@ -169,19 +169,22 @@ ko.components.register "tf-settings",
 
     @updateExponents = () ->
       currExponents = model.exponents();
-      console.log(currExponents);
-      @clicked = false;
+      if !('-1' in currExponents)
+        currExponents['-1'] = true;
+        currExponents['2'] = true;
+        model.exponents(currExponents);
+        performAddCycle();
+      else
+        @clicked = false;
     
     @updateMultiplicands = () ->
-      # model.exponents({1: true})
-      # model.multiplicands(1)
       currNumMultiplicands = model.multiplicands();
-      console.log(currNumMultiplicands);
-      if currNumMultiplicands < 2
+      if currNumMultiplicands < 3
         model.multiplicands(currNumMultiplicands + 1);
         @performAddCycle();
       else
-        @updateExponents();
+        # @updateExponents();
+        @clicked = false;
 
     @removeLargestPAboveAlpha = () ->
       termsInModel = @currModel.terms;
@@ -227,8 +230,6 @@ ko.components.register "tf-settings",
           innerTerm = [term.index, term.exp, term.lag];
           addedTerm.push(innerTerm);
         adapter.subscribeToChanges();
-        console.log("\n\n\n\n\nADDING TERM")
-        console.log(addedTerm);
         adapter.addTerm(addedTerm);
       
     @checkIfCandidateToBeAdded = () ->
