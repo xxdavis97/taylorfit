@@ -45,11 +45,10 @@
   "dependencies": {
     "ajv": "^6.10.2",
     "c3": "^0.4.23",
-    "coffeescript": "^2.5.1",
+    "coffeescript": "^2.4.1",
     "combinations-js": "^1.1.2",
     "core-js": "^2.6.10",
     "d3": "^4.13.0",
-    "exceljs": "^3.8.1",
     "fast-csv": "^2.5.0",
     "knockout": "^3.5.0",
     "lodash": "^4.17.15",

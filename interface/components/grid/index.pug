@@ -46,7 +46,7 @@ table.grid
             | QQ Plot
           span.mark(data-bind="click:function(){xyplot($index() + 1)}")
             | XY Plot
-          // ko ifnot: istimeseries()
+          // ko  // ifnot: istimeseries()
           // ko ifnot: hasSensitivity($index())
           span.mark(data-bind="click:function(){sensitivity($index())}")
             | Show Sensitivity
@@ -81,7 +81,7 @@ table.grid
             | Delete Transform Column
           // /ko
       // /ko
-    
+
       // ko if: extra
       th.dep
         span Dependent
@@ -190,10 +190,10 @@ table.grid
   tbody
     // ko if: hasMean()
     tr.stat
-      td.static.stat Mean
+      td.static.stat(title="Mean") Mean
 
       // ko foreach: mean()
-      td.stat(data-bind="style:{background: $component.isHidden($index()) ? '#DCDCDC' : '#f2f2f2'}")
+      td.stat(data-bind="style:{background: $component.isHidden($index()) ? '#DCDCDC' : '#FFFFFF'}")
         //ko if: ($data !== null && $data !== "" && $data !== 0)
         span(data-bind="text:$component.round_cell($data)")
         // /ko
@@ -206,10 +206,10 @@ table.grid
 
     // ko if: toggle
     tr.stat
-      td.static.stat SD
+      td.static.stat(title="Standard Deviation") SD
 
       // ko foreach: sd()
-      td.stat(data-bind="style:{background: $component.isHidden($index()) ? '#DCDCDC' : '#f2f2f2'}")
+      td.stat(data-bind="style:{background: $component.isHidden($index()) ? '#DCDCDC' : '#FFFFFF'}")
         //ko if: ($data !== null && $data !== "" && $data !== 0)
         span(data-bind="text:$component.round_cell($data)")
         // /ko
@@ -222,10 +222,10 @@ table.grid
 
     // ko if: toggle
     tr.stat
-      td.static.stat RMS
+      td.static.stat(title="Root Mean Square") RMS
 
       // ko foreach: rms()
-      td.stat(data-bind="style:{background: $component.isHidden($index()) ? '#DCDCDC' : '#f2f2f2'}")
+      td.stat(data-bind="style:{background: $component.isHidden($index()) ? '#DCDCDC' : '#FFFFFF'}")
         //ko if: ($data !== null && $data !== "" && $data !== 0)
         span(data-bind="text:$component.round_cell($data)")
         // /ko
@@ -238,10 +238,10 @@ table.grid
 
     //ko if: toggle
     tr.stat
-      td.static.stat Min
+      td.static.stat(title="Minimum.") Min
 
       // ko foreach: min()
-      td.stat(data-bind="style:{background: $component.isHidden($index()) ? '#DCDCDC' : '#f2f2f2'}")
+      td.stat(data-bind="style:{background: $component.isHidden($index()) ? '#DCDCDC' : '#FFFFFF'}")
         //ko if: ($data !== null && $data !== "" && $data !== 0)
         span(data-bind="text:$component.round_cell($data)")
         // /ko
@@ -254,10 +254,10 @@ table.grid
 
     //ko if: toggle
     tr.stat
-      td.static.stat 25%
+      td.static.stat(title="First Quartile.") 25%
 
       // ko foreach: firstQuartile()
-      td.stat(data-bind="style:{background: $component.isHidden($index()) ? '#DCDCDC' : '#f2f2f2'}")
+      td.stat(data-bind="style:{background: $component.isHidden($index()) ? '#DCDCDC' : '#FFFFFF'}")
         //ko if: ($data !== null && $data !== "" && $data !== 0)
         span(data-bind="text:$component.round_cell($data)")
         // /ko
@@ -270,10 +270,10 @@ table.grid
 
     //ko if: toggle
     tr.stat
-      td.static.stat Med
+      td.static.stat(title="Median.") Med
 
       // ko foreach: med()
-      td.stat(data-bind="style:{background: $component.isHidden($index()) ? '#DCDCDC' : '#f2f2f2'}")
+      td.stat(data-bind="style:{background: $component.isHidden($index()) ? '#DCDCDC' : '#FFFFFF'}")
         //ko if: ($data !== null && $data !== "" && $data !== 0)
         span(data-bind="text:$component.round_cell($data)")
         // /ko
@@ -286,10 +286,10 @@ table.grid
 
     //ko if: toggle
     tr.stat
-      td.static.stat 75%
+      td.static.stat(title="Third Quartile.") 75%
 
       // ko foreach: thirdQuartile()
-      td.stat(data-bind="style:{background: $component.isHidden($index()) ? '#DCDCDC' : '#f2f2f2'}")
+      td.stat(data-bind="style:{background: $component.isHidden($index()) ? '#DCDCDC' : '#FFFFFF'}")
         //ko if: ($data !== null && $data !== "" && $data !== 0)
         span(data-bind="text:$component.round_cell($data)")
         // /ko
@@ -302,10 +302,10 @@ table.grid
 
     //ko if: toggle
     tr.stat
-      td.static.stat Max
+      td.static.stat(title="Max.") Max
 
       // ko foreach: max()
-      td.stat(data-bind="style:{background: $component.isHidden($index()) ? '#DCDCDC' : '#f2f2f2'}")
+      td.stat(data-bind="style:{background: $component.isHidden($index()) ? '#DCDCDC' : '#FFFFFF'}")
         //ko if: ($data !== null && $data !== "" && $data !== 0)
         span(data-bind="text:$component.round_cell($data)")
         // /ko
