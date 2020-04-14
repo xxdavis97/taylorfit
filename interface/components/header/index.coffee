@@ -19,10 +19,6 @@ ko.components.register "tf-header",
     @stop_process = ( ) ->
       adapter.terminate()
 
-
-    @stop_fun = () ->
-      adapter.terminate()
-
     
 
     return this

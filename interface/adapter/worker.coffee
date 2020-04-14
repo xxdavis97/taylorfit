@@ -73,7 +73,7 @@ module.exports = new class WorkerAdapter extends ME
     @post "addTerm", x
   removeTerm: ( x ) ->
     @post "removeTerm", x
-  
+
   transformDelete: ( x ) ->
     if x
       @post("transformData", {
@@ -116,6 +116,7 @@ module.exports = new class WorkerAdapter extends ME
 
   subscribeToChanges: ( ) ->
     @post "subscribeToChanges"
+    
   unsubscribeToChanges: ( ) ->
     @post "unsubscribeToChanges"
 

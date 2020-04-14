@@ -1,7 +1,7 @@
 
 require "./index.styl"
 Model = require "../Model"
-Combintations = require "combinations-js"
+Combinations = require "combinations-js"
 
 download = ( name, type, content ) ->
   a = document.createElement "a"
@@ -98,16 +98,16 @@ ko.components.register "tf-settings",
       while i <= @multiplicands()
 
         if n_lags <= 1 or (zero_lag == false)
-          c = Combintations comb_vals, i
+          c = Combinations comb_vals, i
           p = Math.pow(base, i)
           accum += c * p
         else
           if i == 0
             accum += 1
           else
-            c1 = Combintations comb_vals, i
+            c1 = Combinations comb_vals, i
             p1 = Math.pow(base, i)
-            c2 = Combintations comb_vals, i - 1
+            c2 = Combinations comb_vals, i - 1
             p2 = Math.pow(base, i-1) * e * (n_lags - 1)
             accum += (c1 * p1) + (c2 * p2)
         i++
@@ -181,7 +181,7 @@ ko.components.register "tf-settings",
       # Update sensitivity columns
       for column in model.sensitivityColumns()
         model.update_sensitivity(column.index)
-      
+
       # Update importance ratio columns
       for column in model.importanceRatioColumns()
         model.update_importanceRatio(column.index)

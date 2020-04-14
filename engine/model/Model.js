@@ -261,7 +261,7 @@ class Model extends CacheMixin(Observable) {
 
     let residuals = stats.y.sub(stats.yHat);
     residuals = residuals.data;
-    
+
     return {
       highestLag: this.highestLag(),
       terms,
@@ -411,46 +411,51 @@ class Model extends CacheMixin(Observable) {
     if (index == undefined) {
       return this;
     }
+
+    if (highestLag() != null) {
+
+    }
+    
     let model = this; // to use within loops below
     let num_rows = model[_data][FIT_LABEL].shape[0];
-    let derivative = new Matrix(num_rows, 1, new Array(num_rows).fill(0))
-    
+    let derivative = new Matrix(num_rows, 1, new Array(num_rows).fill(0));
+
     this.terms.forEach(function (t) {
       let contains_variable = false; // Check if the variable we are deriving on is in this term
-      let derivative_part = new Matrix(num_rows, 1, new Array(num_rows).fill(1))
+      let derivative_part = new Matrix(num_rows, 1, new Array(num_rows).fill(1));
 
       // One coefficient per term
-      let term_coef = 2 * t.getStats()['coeff']
-      
+      let term_coef = 2 * t.getStats()['coeff'];
+
       // t.valueOf() is an Array which contains information for each variable of the term
       let tValues = t.valueOf();
       tValues.forEach(function(tValue) {
-          let current_index = tValue[0];
-          let current_exp = tValue[1];
-          
-          // Get the current column of data
-          let current_col = model[_data][label].col(current_index)['data'];
+        let current_index = tValue[0];
+        let current_exp = tValue[1];
 
-          let part;
-          if (current_index == index) {
-            // Current variable exists in term, should be used in derivative
-            contains_variable = true;
+        // Get the current column of data
+        let current_col = model[_data][label].col(current_index)['data'];
 
-            // current_exp * [COLUMN DATA]^(current_exp - 1)
-            part = statistics.compute('sensitivity_part', { data:current_col, exp:current_exp, derivative:true });
-          }
-          else {
-            // [COLUMN DATA]^(current_exp)
-            part = statistics.compute('sensitivity_part', { data: current_col, exp: current_exp, derivative:false });
-          }
-          derivative_part = derivative_part.dotMultiply(new Matrix(num_rows, 1, part));
-        });
+        let part;
+        if (current_index == index) {
+          // Current variable exists in term, should be used in derivative
+          contains_variable = true;
 
-        if (contains_variable) {
-          // Add to overall derivative
-          derivative = derivative.add(derivative_part.dotMultiply(term_coef));
+          // current_exp * [COLUMN DATA]^(current_exp - 1)
+          part = statistics.compute('sensitivity_part', { data:current_col, exp:current_exp, derivative:true });
         }
-    
+        else {
+          // [COLUMN DATA]^(current_exp)
+          part = statistics.compute('sensitivity_part', { data: current_col, exp: current_exp, derivative:false });
+        }
+          derivative_part = derivative_part.dotMultiply(new Matrix(num_rows, 1, part));
+      });
+
+      if (contains_variable) {
+        // Add to overall derivative
+        derivative = derivative.add(derivative_part.dotMultiply(term_coef));
+      }
+
     });
 
     return {index: index, sensitivity: derivative.data}
@@ -477,7 +482,7 @@ class Model extends CacheMixin(Observable) {
     if (index == undefined) {
       return this;
     }
-    let model = this; 
+    let model = this;
     let num_rows = model[_data][FIT_LABEL].shape[0];
     let current_col = model[_data][label].col(index);
     let dependent_col = model[_data][label].col(model[_dependent]);
@@ -534,4 +539,3 @@ CacheMixin.cache(Model, 'y', [FIT_LABEL]);
 CacheMixin.cache(Model, 'data', [FIT_LABEL]);
 
 module.exports = Model;
-
