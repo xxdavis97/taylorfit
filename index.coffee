@@ -1,7 +1,7 @@
 
 require "./index.styl"
 Model = require "../Model"
-Combinations = require "combinations-js"
+Combintations = require "combinations-js"
 
 download = ( name, type, content ) ->
   a = document.createElement "a"
@@ -24,8 +24,12 @@ ko.components.register "tf-settings",
       expects [model] to be observable"
 
     model = params.model() # now static
+    
 
     @active = model.show_settings
+    
+    #model = model.show_settings(true)
+    
 
     @exponents = model.exponents
     @multiplicands = model.multiplicands
@@ -63,16 +67,16 @@ ko.components.register "tf-settings",
       while i <= @multiplicands()
 
         if n_lags <= 1 or (zero_lag == false)
-          c = Combinations comb_vals, i
+          c = Combintations comb_vals, i
           p = Math.pow(base, i)
           accum += c * p
         else
           if i == 0
             accum += 1
           else
-            c1 = Combinations comb_vals, i
+            c1 = Combintations comb_vals, i
             p1 = Math.pow(base, i)
-            c2 = Combinations comb_vals, i - 1
+            c2 = Combintations comb_vals, i - 1
             p2 = Math.pow(base, i-1) * e * (n_lags - 1)
             accum += (c1 * p1) + (c2 * p2)
         i++
@@ -99,10 +103,13 @@ ko.components.register "tf-settings",
 
     @timeseries.subscribe ( next ) =>
       @lags { 0: true } unless next
+      
 
-    @active.subscribe ( next ) ->
+    @active.subscribe (next) ->
+      #if unchange then adapter.unsubscribeToChanges()
       if next then adapter.unsubscribeToChanges()
-      else adapter.subscribeToChanges()
+      if adapter.addTerm then adapter.subscribeToChanges()
+      
 
     @download_model = ( ) ->
       model = params.model()
@@ -121,7 +128,7 @@ ko.components.register "tf-settings",
       # Update sensitivity columns
       for column in model.sensitivityColumns()
         model.update_sensitivity(column.index)
-
+      
       # Update importance ratio columns
       for column in model.importanceRatioColumns()
         model.update_importanceRatio(column.index)

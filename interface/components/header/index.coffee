@@ -1,5 +1,7 @@
 
 require "./index.styl"
+Model = require "../Model"
+Combintations = require "combinations-js"
 
 ko.components.register "tf-header",
   template: do require "./index.pug"
@@ -13,5 +15,10 @@ ko.components.register "tf-header",
     @toggle_settings = ( ) ->
       settings = params.model().show_settings
       settings not settings()
+
+    @stop_process = ( ) ->
+      adapter.terminate()
+
+    
 
     return this
