@@ -6,7 +6,6 @@ const statistics      = require('../statistics');
 const utils           = require('../utils');
 const perf            = require('../perf');
 const Observable      = require('../observable');
-const exceljs         = require('exceljs');
 const {
   FIT_LABEL,
   CROSS_LABEL,
