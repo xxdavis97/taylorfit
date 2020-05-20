@@ -158,12 +158,6 @@ ko.components.register "tf-settings",
       else
         adapter.unsubscribeToChanges();
 
-
-
-
-
-
-
     @download_model = ( ) ->
       model = params.model()
       download (model.id() or "model") + ".tf",
@@ -224,7 +218,7 @@ ko.components.register "tf-settings",
 
     @updateMultiplicands = () ->
       currNumMultiplicands = model.multiplicands();
-      if @keepUpdateMult && currNumMultiplicands < 2#3
+      if @keepUpdateMult && currNumMultiplicands < 3#2
         model.multiplicands(currNumMultiplicands + 1);
         @recentMultUpdate = true;
         @performAddCycle();
@@ -363,7 +357,6 @@ ko.components.register "tf-settings",
       # console.log(model.candidates());
       # console.log(model.columns());
       @performAddCycle();
-
       # params.model().candidates() represents the potential pool of choices to add to the model from the right panel
       # Can get p(t) and adjR2 with .stats.pt or .stats.adjRsq
       # console.log(params.model().candidates());

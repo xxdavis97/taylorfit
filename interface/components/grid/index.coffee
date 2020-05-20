@@ -109,7 +109,7 @@ ko.components.register "tf-grid",
 
     @sensitivity = ( index ) ->
       model.show_sensitivity( index )
-    
+
     @deleteSensitivity = ( index, type ) ->
       # Delete with either column index or sensitivity index
       if type == "column"
@@ -118,7 +118,7 @@ ko.components.register "tf-grid",
             return model.delete_sensitivity( sensitivityIndex )
         )
       else if type == "sensitivity"
-        model.delete_sensitivity( index ) 
+        model.delete_sensitivity( index )
 
     @hasSensitivity = ( index ) ->
       found = false
@@ -130,7 +130,7 @@ ko.components.register "tf-grid",
 
     @importanceRatio = ( index ) ->
       model.show_importanceRatio( index )
-    
+
     @deleteImportanceRatio = ( index, type ) ->
       # Delete with either column index or ratio index
       if type == "column"
@@ -139,7 +139,7 @@ ko.components.register "tf-grid",
             return model.delete_importanceRatio( importanceRatioIndex )
         )
       else if type == "importanceRatio"
-        model.delete_importanceRatio( index ) 
+        model.delete_importanceRatio( index )
 
     @hasImportanceRatio = ( index ) ->
       found = false
@@ -147,14 +147,14 @@ ko.components.register "tf-grid",
         if column.index == index
           found = true
       )
-      return found  
-    
+      return found
+
     # Is hidden if ignored or has transformed column
     @isHidden = ( index ) ->
       return (@hiddenColumns().hasOwnProperty(index) &&
         @hiddenColumns()[index]) ||
         @transform_columns()[index]
-    
+
     @canDeleteTransformColumn = ( index ) ->
       transformColumns = Object.values(@transform_columns())
       # The index must be a value in transform_columns. It is a transformation of the key
@@ -264,7 +264,7 @@ ko.components.register "tf-grid",
           sensitive.forEach( (col) ->
             totals.push(col[0])
           )
-          importance.forEach( (col) -> 
+          importance.forEach( (col) ->
             totals.push(col[0]);
           )
         else
@@ -280,7 +280,7 @@ ko.components.register "tf-grid",
               totals[i] = totals[i] + extra[k][j]
               i++;
               j++;
-          sensitive.forEach( (col) -> 
+          sensitive.forEach( (col) ->
             iter = 1
             while iter < col.length
               totals[i] = totals[i] + col[iter]
@@ -301,7 +301,6 @@ ko.components.register "tf-grid",
         i++;
       )
       return totals;
-    
     @flipMean = ( ) ->
       @toggleMean = !@toggleMean
 
@@ -317,11 +316,11 @@ ko.components.register "tf-grid",
       importance = @importanceRatioData();
       while k < rows.length
         if master.length == 0
-          rows[k].forEach( (dataPoint) -> 
+          rows[k].forEach( (dataPoint) ->
             master.push([dataPoint])
           )
           if extra
-            extra[k].forEach( (dataPoint) -> 
+            extra[k].forEach( (dataPoint) ->
               master.push([dataPoint])
             )
         else
@@ -338,14 +337,13 @@ ko.components.register "tf-grid",
               i++;
               j++;
         k++
-      sensitive.forEach( (col) -> 
+      sensitive.forEach( (col) ->
         master.push(Object.values(col))
       )
       importance.forEach( (col) ->
         master.push(Object.values(col))
       )
       return master;
-    
     @colData = @getColData();
 
     @med = ( ) ->
@@ -354,14 +352,14 @@ ko.components.register "tf-grid",
       if @extra()
         @colData = @getColData();
       result = [];
-      @colData.forEach( (col) -> 
+      @colData.forEach( (col) ->
         col = col.sort( (a, b) ->
           return a - b;
         );
         middle = Math.floor((col.length - 1) / 2);
-        if col.length % 2 
+        if col.length % 2
           result.push(col[middle]);
-        else 
+        else
           result.push((col[middle] + col[middle + 1]) / 2.0);
       )
       return result;
@@ -381,7 +379,7 @@ ko.components.register "tf-grid",
         rest = pos - base;
         if (col[base+1] != undefined)
           result.push(col[base] + rest * (col[base+1] - col[base]));
-        else 
+        else
           result.push(col[base]);
       )
       return result;
@@ -401,12 +399,12 @@ ko.components.register "tf-grid",
         rest = pos - base;
         if (col[base+1] != undefined)
           result.push(col[base] + rest * (col[base+1] - col[base]));
-        else 
+        else
           result.push(col[base]);
       )
       return result;
-    
-    @sd = ( ) => 
+
+    @sd = ( ) =>
       if (@colData.length == @rows()[0].length)
         @colData = @getColData();
       if @extra()
@@ -440,7 +438,7 @@ ko.components.register "tf-grid",
           sensitive.forEach( (col) ->
             min.push(col[0])
           )
-          importance.forEach( (col) -> 
+          importance.forEach( (col) ->
             min.push(col[0]);
           )
         else
@@ -458,7 +456,7 @@ ko.components.register "tf-grid",
                 min[i] = extra[k][j]
               i++;
               j++;
-          sensitive.forEach( (col) -> 
+          sensitive.forEach( (col) ->
             iter = 1
             while iter < col.length
               if col[iter] < min[i]
@@ -495,7 +493,7 @@ ko.components.register "tf-grid",
           sensitive.forEach( (col) ->
             max.push(col[0])
           )
-          importance.forEach( (col) -> 
+          importance.forEach( (col) ->
             max.push(col[0]);
           )
         else
@@ -513,7 +511,7 @@ ko.components.register "tf-grid",
                 max[i] = extra[k][j]
               i++;
               j++;
-          sensitive.forEach( (col) -> 
+          sensitive.forEach( (col) ->
             iter = 1
             while iter < col.length
               if col[iter] > max[i]
@@ -539,17 +537,17 @@ ko.components.register "tf-grid",
         @colData = @getColData();
       result = []
       @colData.forEach( (col) ->
-        squares = col.map((val) => (val*val)); 
-        sum = squares.reduce((acum, val) => (acum + val));    
-        mean = sum/col.length; 
-        result.push(Math.sqrt(mean)); 
+        squares = col.map((val) => (val*val));
+        sum = squares.reduce((acum, val) => (acum + val));
+        mean = sum/col.length;
+        result.push(Math.sqrt(mean));
       )
       return result;
 
     @cols.subscribe ( next ) =>
       if next then adapter.unsubscribeToChanges()
       else adapter.subscribeToChanges()
-    
+
     @rows.subscribe ( next ) =>
       if next then adapter.unsubscribeToChanges()
       else adapter.subscribeToChanges()

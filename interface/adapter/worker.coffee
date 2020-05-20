@@ -34,8 +34,7 @@ class ME
 module.exports = new class WorkerAdapter extends ME
 
   constructor: ( ) ->
-    super
-
+    super()
     @worker = new Worker "engine-worker.js"
 
     @worker.onerror = ( error ) =>
@@ -74,7 +73,7 @@ module.exports = new class WorkerAdapter extends ME
     @post "addTerm", x
   removeTerm: ( x ) ->
     @post "removeTerm", x
-  
+
   transformDelete: ( x ) ->
     if x
       @post("transformData", {
@@ -117,6 +116,7 @@ module.exports = new class WorkerAdapter extends ME
 
   subscribeToChanges: ( ) ->
     @post "subscribeToChanges"
+    
   unsubscribeToChanges: ( ) ->
     @post "unsubscribeToChanges"
 

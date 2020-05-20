@@ -99,4 +99,8 @@ ko.components.register "tf-candidates",
       for column in model.importanceRatioColumns()
         model.update_importanceRatio(column.index)
 
+    # sort table by dvaccari's demand. Basically, put the most greens on the top
+    #@sort_asked_by_dvaccari = () ->
+      
+
     return this
